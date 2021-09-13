@@ -1,9 +1,9 @@
-import Hapi from '@hapi/hapi';
-import { statusHandler } from '../handlers/status';
+import { Plugin } from '@hapi/hapi';
+import statusRoutes from '../routes/status';
 
-const plugin: Hapi.Plugin<undefined> = {
+const statusPlugin: Plugin<null> = {
   name: 'app/status',
-  register: statusHandler,
+  register: statusRoutes,
 };
 
-export default plugin;
+export default statusPlugin;

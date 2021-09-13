@@ -1,4 +1,4 @@
-import Hapi from '@hapi/hapi';
+import Hapi, { Server } from '@hapi/hapi';
 import hapiAuthJWT from 'hapi-auth-jwt2';
 import prismaPlugin from '../plugins/prisma';
 import emailPlugin from '../plugins/email';
@@ -10,12 +10,12 @@ import hapiPino from 'hapi-pino';
 
 dotenv.config();
 
-const server: Hapi.Server = Hapi.server({
+const server: Server = Hapi.server({
   port: process.env.PORT || 3000,
   host: process.env.HOST || '0.0.0.0',
 });
 
-export const createServer = async (): Promise<Hapi.Server> => {
+export const createServer = async (): Promise<Server> => {
   // Register the logger
   await server.register({
     plugin: hapiPino,
@@ -32,7 +32,7 @@ export const createServer = async (): Promise<Hapi.Server> => {
   return server;
 };
 
-export const startServer = async (server: Hapi.Server): Promise<Hapi.Server> => {
+export const startServer = async (server: Server): Promise<Server> => {
   await server.start();
   server.log('info', `Server is running on ${server.info.uri}`);
   return server;

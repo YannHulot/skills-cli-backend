@@ -1,7 +1,7 @@
-import Hapi from '@hapi/hapi';
+import { Server } from '@hapi/hapi';
 import sendgrid from '@sendgrid/mail';
 
-export const emailSender = async (server: Hapi.Server) => {
+export const emailSender = async (server: Server) => {
   const sendgridAPIKey = process.env.SENDGRID_API_KEY || null;
 
   if (sendgridAPIKey) {

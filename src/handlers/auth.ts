@@ -1,4 +1,4 @@
-import Hapi from '@hapi/hapi';
+import { Request, ResponseToolkit } from '@hapi/hapi';
 import Boom from '@hapi/boom';
 import { TokenType } from '@prisma/client';
 import { add } from 'date-fns';
@@ -13,7 +13,7 @@ import { generateAuthToken, generateEmailToken } from '../helpers/jwt';
 import { apiTokenSchema } from '../validators/auth';
 
 // This function will be called on every request using the auth strategy
-export const validateAPIToken = async (decoded: APITokenPayload, request: Hapi.Request) => {
+export const validateAPIToken = async (decoded: APITokenPayload, request: Request) => {
   const { prisma } = request.server.app;
   const { tokenId } = decoded;
 
@@ -67,7 +67,7 @@ export const validateAPIToken = async (decoded: APITokenPayload, request: Hapi.R
  * It generates a short lived verification token and sends an email if a sendgrid API key is present in the environment
  * or it return the token in the payload and headers
  */
-export const loginHandler = async (request: Hapi.Request, h: Hapi.ResponseToolkit) => {
+export const loginHandler = async (request: Request, h: ResponseToolkit) => {
   // 👇 get prisma and the sendEmailToken from shared application state
   const { prisma, sendEmailToken } = request.server.app;
   // 👇 get the email from the request payload
@@ -111,7 +111,7 @@ export const loginHandler = async (request: Hapi.Request, h: Hapi.ResponseToolki
   }
 };
 
-export const authenticateHandler = async (request: Hapi.Request, h: Hapi.ResponseToolkit) => {
+export const authenticateHandler = async (request: Request, h: ResponseToolkit) => {
   // 👇 get prisma from shared application state
   const { prisma } = request.server.app;
   // 👇 get the email and emailToken from the request payload

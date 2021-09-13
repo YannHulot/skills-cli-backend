@@ -1,3 +1,4 @@
+import { Plugin } from '@hapi/hapi';
 import { emailSender } from '../handlers/email';
 
 // Module augmentation to add shared application state
@@ -8,7 +9,7 @@ declare module '@hapi/hapi' {
   }
 }
 
-const emailPlugin = {
+const emailPlugin: Plugin<null> = {
   name: 'app/email',
   register: emailSender,
 };

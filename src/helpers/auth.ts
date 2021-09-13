@@ -1,8 +1,8 @@
 import Boom from '@hapi/boom';
-import Hapi from '@hapi/hapi';
+import { Request, ResponseToolkit } from '@hapi/hapi';
 
 // Pre function to check if the authenticated user matches the requested user
-export const isRequestedUserOrAdmin = async (request: Hapi.Request, h: Hapi.ResponseToolkit) => {
+export const isRequestedUserOrAdmin = async (request: Request, h: ResponseToolkit) => {
   const { userId, isAdmin } = request.auth.credentials;
 
   if (isAdmin) {
@@ -20,7 +20,7 @@ export const isRequestedUserOrAdmin = async (request: Hapi.Request, h: Hapi.Resp
 };
 
 // Pre function to check if the authenticated user matches the requested user
-export const isAdmin = async (request: Hapi.Request, h: Hapi.ResponseToolkit) => {
+export const isAdmin = async (request: Request, h: ResponseToolkit) => {
   if (request.auth.credentials.isAdmin) {
     // If the user is an admin allow
     return h.continue;

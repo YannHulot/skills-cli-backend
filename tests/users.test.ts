@@ -1,14 +1,14 @@
 import { createServer } from '../src/server';
-import Hapi, { AuthCredentials } from '@hapi/hapi';
+import { AuthCredentials, Server, ServerInjectResponse } from '@hapi/hapi';
 import { createUserCredentials } from './helpers/users';
 import { API_AUTH_STRATEGY } from '../src/types/auth';
 
 describe('users endpoints', () => {
-  let server: Hapi.Server;
+  let server: Server;
   let testBasicCredentials: AuthCredentials;
   let testAdminCredentials: AuthCredentials;
   let userId: number;
-  let response: Hapi.ServerInjectResponse;
+  let response: ServerInjectResponse;
 
   beforeAll(async () => {
     server = await createServer();

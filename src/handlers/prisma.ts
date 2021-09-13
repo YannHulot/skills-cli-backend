@@ -1,11 +1,11 @@
 import { PrismaClient } from '@prisma/client';
-import Hapi from '@hapi/hapi';
+import { Server } from '@hapi/hapi';
 
-const disconnectFromDB = async (server: Hapi.Server) => {
+const disconnectFromDB = async (server: Server) => {
   server.app.prisma.$disconnect();
 };
 
-export const prismaHandler = async (server: Hapi.Server) => {
+export const prismaHandler = async (server: Server) => {
   const prisma = new PrismaClient({
     log: ['error'],
   });
