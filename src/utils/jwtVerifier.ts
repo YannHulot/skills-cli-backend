@@ -42,7 +42,7 @@ const middlewareVerifier = async (request: FastifyRequest, response: FastifyRepl
       return;
     }
   } catch (err) {
-    response.code(401).send({ error: 'generic error' });
+    response.code(401).send({ error: 'token is invalid' });
   }
 };
 

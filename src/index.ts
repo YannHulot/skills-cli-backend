@@ -1,7 +1,8 @@
 import { PrismaClient } from '@prisma/client';
 import Fastify, { FastifyInstance } from 'fastify';
-import jwtVerifier from './jwtVerifier';
-import { IncomingNewUser } from './types/incoming';
+import jwtVerifier from './utils/jwtVerifier';
+import { IncomingNewUser, IncomingUpdateUser } from './types/incoming';
+import { createUser, updateUser } from './users';
 
 const prisma = new PrismaClient();
 const server: FastifyInstance = Fastify({ logger: true });
@@ -32,15 +33,32 @@ server.route<{ Body: IncomingNewUser }>({
     return jwtVerifier(request, reply);
   },
   handler: async (request) => {
-    const { firstName, lastName, email } = request.body;
-    const user = await prisma.user.create({
-      data: {
-        firstName: firstName,
-        lastName,
-        email,
-      },
-    });
+    const user = await createUser(request.body);
     return { success: true, payload: user };
+  },
+});
+
+server.route<{ Body: IncomingUpdateUser }>({
+  method: 'PUT',
+  url: '/update',
+  schema: {
+    body: {
+      id: { type: 'number' },
+      email: { type: 'string' },
+      firstName: { type: 'string' },
+      lastName: { type: 'string' },
+    },
+  },
+  preHandler: async (request, reply) => {
+    return jwtVerifier(request, reply);
+  },
+  handler: async (request) => {
+    const userOrError = await updateUser(request.body);
+    if (userOrError instanceof Error) {
+      return { success: false, error: userOrError.message };
+    } else {
+      return { success: false, payload: userOrError };
+    }
   },
 });
 
