@@ -135,7 +135,6 @@ const validateAPIToken = async (decoded: APITokenPayload, request: Hapi.Request)
         tokenId: decoded.tokenId,
         userId: fetchedToken.userId,
         isAdmin: fetchedToken.user.isAdmin,
-        // convert teacherOf into an array of courseIds
       },
     };
   } catch (error) {

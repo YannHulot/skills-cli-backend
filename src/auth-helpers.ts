@@ -27,6 +27,6 @@ export async function isAdmin(request: Hapi.Request, h: Hapi.ResponseToolkit) {
     return h.continue;
   }
 
-  // The authenticated user is not a teacher
+  // The authenticated user is not an admin
   throw Boom.forbidden();
 }
