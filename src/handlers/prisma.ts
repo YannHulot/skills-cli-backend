@@ -1,6 +1,10 @@
 import { PrismaClient } from '@prisma/client';
 import Hapi from '@hapi/hapi';
 
+const disconnectFromDB = async (server: Hapi.Server) => {
+  server.app.prisma.$disconnect();
+};
+
 export const prismaHandler = async (server: Hapi.Server) => {
   const prisma = new PrismaClient({
     log: ['error'],
@@ -12,8 +16,6 @@ export const prismaHandler = async (server: Hapi.Server) => {
   // Related issue: https://github.com/hapijs/hapi/issues/2839
   server.ext({
     type: 'onPostStop',
-    method: async (server: Hapi.Server) => {
-      server.app.prisma.$disconnect();
-    },
+    method: disconnectFromDB,
   });
 };
