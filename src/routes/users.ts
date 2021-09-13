@@ -10,8 +10,8 @@ import {
   updateUserHandler,
 } from '../handlers/users';
 import { failActionHandler } from '../handlers/fail';
-import { createUserValidator, updateUserValidator } from '../validators/user';
-import { userIdValidator } from '../validators/user';
+import { createUserValidator, updateUserValidator } from '../validators/users';
+import { userIdValidator } from '../validators/users';
 
 const routes = async (server: Server) => {
   server.route([
