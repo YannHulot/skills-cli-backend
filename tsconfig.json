@@ -2,9 +2,9 @@
   "compilerOptions": {
     "target": "es6",
     "module": "commonjs",
-    "rootDir": "src",
     "outDir": "dist",
     "sourceMap": true,
+    "strictNullChecks": true,
     "resolveJsonModule": true,
     "lib": [
       "es6",
@@ -13,7 +13,9 @@
     "esModuleInterop": true
   },
   "include": [
-    "src/**/*.ts"
+    "src/**/*.ts",
+    "src/singleton.ts",
+    "src/seed.ts"
   ],
   "exclude": [
     "node_modules"
