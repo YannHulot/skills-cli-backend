@@ -46,7 +46,7 @@ const authPlugin: Hapi.Plugin<null> = {
         },
       },
       {
-        // Endpoint to authenticate the magiclink and to generate a long lived token
+        // Endpoint to authenticate the short lived token and to generate a long lived token
         method: 'POST',
         path: '/authenticate',
         handler: authenticateHandler,

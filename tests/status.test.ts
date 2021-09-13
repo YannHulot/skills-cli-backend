@@ -17,6 +17,7 @@ describe('Status plugin', () => {
       method: 'GET',
       url: '/',
     });
+
     expect(res.statusCode).toEqual(200);
     const response = JSON.parse(res.payload);
     expect(response.up).toEqual(true);

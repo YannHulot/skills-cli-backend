@@ -100,9 +100,13 @@ export const loginHandler = async (request: Hapi.Request, h: Hapi.ResponseToolki
       },
     });
 
-    // 👇 send the email token
-    await sendEmailToken(email, emailToken);
-    return h.response().code(200);
+    // if we dont have a sendgrid key, we just return the token as part of the response payload
+    // for easier and faster testing purposes
+    if (!process.env.SENDGRID_API_KEY) {
+      return h.response({ emailToken }).code(200);
+    } else {
+      await sendEmailToken(email, emailToken);
+    }
   } catch (error) {
     return Boom.badImplementation(error.message);
   }
