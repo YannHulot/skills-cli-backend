@@ -12,15 +12,15 @@ import {
 import { generateAuthToken, generateEmailToken } from '../helpers/jwt';
 import { apiTokenSchema } from '../validators/auth';
 
-// Function will be called on every request using the auth strategy
+// This function will be called on every request using the auth strategy
 export const validateAPIToken = async (decoded: APITokenPayload, request: Hapi.Request) => {
   const { prisma } = request.server.app;
   const { tokenId } = decoded;
-  const { error } = apiTokenSchema.validate(decoded);
 
+  const { error } = apiTokenSchema.validate(decoded);
   if (error) {
     request.log(['error', 'auth'], `API token error: ${error.message}`);
-    return { isValid: false };
+    return { isValid: false, errorMessage: 'Invalid token' };
   }
 
   try {
@@ -63,8 +63,9 @@ export const validateAPIToken = async (decoded: APITokenPayload, request: Hapi.R
 /**
  * Login/Registration handler
  *
- * Because there are no passwords, the same endpoint is used for login and registration
- * Generates a short lived verification token and sends an email
+ * Because there are no passwords, the same endpoint is used for login and authentication
+ * It generates a short lived verification token and sends an email if a sendgrid API key is present in the environment
+ * or it return the token in the payload and headers
  */
 export const loginHandler = async (request: Hapi.Request, h: Hapi.ResponseToolkit) => {
   // 👇 get prisma and the sendEmailToken from shared application state
@@ -89,8 +90,6 @@ export const loginHandler = async (request: Hapi.Request, h: Hapi.ResponseToolki
           connectOrCreate: {
             create: {
               email,
-              firstName: 'auth-firstName-automated',
-              lastName: 'auth-lastName-automated',
             },
             where: {
               email,
@@ -100,10 +99,10 @@ export const loginHandler = async (request: Hapi.Request, h: Hapi.ResponseToolki
       },
     });
 
-    // if we dont have a sendgrid key, we just return the token as part of the response payload
-    // for easier and faster testing purposes
+    // if we don't have a Sendgrid API key set in our environment, then we just return the token as part of the response payload
+    // and in the headers for easier and faster testing purposes
     if (!process.env.SENDGRID_API_KEY) {
-      return h.response({ emailToken }).code(200);
+      return h.response({ emailToken }).header('EmailToken', emailToken).code(200);
     } else {
       await sendEmailToken(email, emailToken);
     }
@@ -144,6 +143,7 @@ export const authenticateHandler = async (request: Hapi.Request, h: Hapi.Respons
       const tokenExpiration = add(new Date(), {
         hours: AUTHENTICATION_TOKEN_EXPIRATION_HOURS,
       });
+
       // Persist token in DB so it's stateful
       const createdToken = await prisma.token.create({
         data: {
