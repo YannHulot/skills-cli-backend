@@ -2,8 +2,9 @@ import { Server } from '@hapi/hapi';
 import { API_AUTH_STRATEGY, JWT_ALGORITHM, JWT_SECRET } from '../types/auth';
 import { validateAPIToken, loginHandler, authenticateHandler } from '../handlers/auth';
 import { emailValidator, emailAndTokenValidator } from '../validators/auth';
+import { failActionHandler } from '../handlers/fail';
 
-const authRoutes = async (server: Server) => {
+const routes = async (server: Server) => {
   if (!process.env.JWT_SECRET) {
     server.log('warn', 'The JWT_SECRET env var is not set. This is unsafe! If running in production, set it.');
   }
@@ -26,10 +27,7 @@ const authRoutes = async (server: Server) => {
       options: {
         auth: false,
         validate: {
-          failAction: (_request, _h, err) => {
-            // show validation errors to user https://github.com/hapijs/hapi/issues/3706
-            throw err;
-          },
+          failAction: failActionHandler,
           payload: emailValidator,
         },
       },
@@ -43,10 +41,11 @@ const authRoutes = async (server: Server) => {
         auth: false,
         validate: {
           payload: emailAndTokenValidator,
+          failAction: failActionHandler,
         },
       },
     },
   ]);
 };
 
-export default authRoutes;
+export default routes;

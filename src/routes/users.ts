@@ -9,10 +9,11 @@ import {
   deleteUserHandler,
   updateUserHandler,
 } from '../handlers/users';
+import { failActionHandler } from '../handlers/fail';
 import { createUserValidator, updateUserValidator } from '../validators/user';
 import { userIdValidator } from '../validators/user';
 
-const userRoutes = async (server: Server) => {
+const routes = async (server: Server) => {
   server.route([
     {
       method: 'GET',
@@ -36,10 +37,7 @@ const userRoutes = async (server: Server) => {
           strategy: API_AUTH_STRATEGY,
         },
         validate: {
-          failAction: (_request, _h, err) => {
-            // show validation errors to user https://github.com/hapijs/hapi/issues/3706
-            throw err;
-          },
+          failAction: failActionHandler,
         },
       },
     },
@@ -55,10 +53,7 @@ const userRoutes = async (server: Server) => {
         },
         validate: {
           params: userIdValidator,
-          failAction: (_request, _h, err) => {
-            // show validation errors to user https://github.com/hapijs/hapi/issues/3706
-            throw err;
-          },
+          failAction: failActionHandler,
         },
       },
     },
@@ -74,10 +69,7 @@ const userRoutes = async (server: Server) => {
         },
         validate: {
           payload: createUserValidator,
-          failAction: (_request, _h, err) => {
-            // show validation errors to user https://github.com/hapijs/hapi/issues/3706
-            throw err;
-          },
+          failAction: failActionHandler,
         },
       },
     },
@@ -93,10 +85,7 @@ const userRoutes = async (server: Server) => {
         },
         validate: {
           params: userIdValidator,
-          failAction: (_request, _h, err) => {
-            // show validation errors to user https://github.com/hapijs/hapi/issues/3706
-            throw err;
-          },
+          failAction: failActionHandler,
         },
       },
     },
@@ -113,14 +102,11 @@ const userRoutes = async (server: Server) => {
         validate: {
           params: userIdValidator,
           payload: updateUserValidator,
-          failAction: (_request, _h, err) => {
-            // show validation errors to user https://github.com/hapijs/hapi/issues/3706
-            throw err;
-          },
+          failAction: failActionHandler,
         },
       },
     },
   ]);
 };
 
-export default userRoutes;
+export default routes;

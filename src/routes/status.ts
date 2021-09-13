@@ -1,14 +1,15 @@
-import { Server, ResponseToolkit } from '@hapi/hapi';
+import { Server } from '@hapi/hapi';
+import { statusHandler } from '../handlers/status';
 
-const statusRoutes = async (server: Server) => {
+const routes = async (server: Server) => {
   server.route({
     method: 'GET',
     path: '/',
-    handler: (_, h: ResponseToolkit) => h.response({ up: true }).code(200),
+    handler: statusHandler,
     options: {
       auth: false,
     },
   });
 };
 
-export default statusRoutes;
+export default routes;
