@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "tsc",
+    "build": "prisma generate  tsc",
     "start": "tsc && node dist/index.js",
     "prettier:fix": "prettier --write 'src/**/*.ts'",
     "dev": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/index.ts",
@@ -13,7 +13,16 @@
     "check-format": "prettier --check .",
     "check-lint": "eslint 'src/**/*.ts'",
     "prepare": "husky install",
-    "test": "jest -i"
+    "seed": "prisma db seed --preview-feature",
+    "seed-users": "ts-node ./src/seed-users.ts",
+    "test": "TEST=true jest -i",
+    "test:watch": "TEST=true jest --watch",
+    "postgres:start": "docker-compose up -d",
+    "db:push": "prisma migrate reset --force --preview-feature && prisma migrate deploy --preview-feature",
+    "migrate:reset": "prisma migrate reset",
+    "migrate:create": "prisma migrate dev --create-only",
+    "migrate:dev": "prisma migrate dev",
+    "prisma:generate": "prisma generate"
   },
   "keywords": [],
   "author": "",
@@ -36,12 +45,25 @@
     "prisma": "^3.0.2",
     "ts-jest": "^27.0.5",
     "ts-node": "^10.2.1",
-    "typescript": "^4.4.3"
+    "typescript": "^4.4.3",
+    "@types/hapi-pino": "8.0.2",
+    "@types/hapi__hapi": "20.0.8",
+    "@types/jsonwebtoken": "8.5.3"
   },
   "dependencies": {
+    "@hapi/boom": "9.1.4",
+    "@hapi/hapi": "20.1.5",
+    "joi": "17.4.2",
+    "@sendgrid/mail": "7.4.6",
+    "date-fns": "2.22.1",
+    "hapi-auth-jwt2": "10.2.0",
+    "hapi-pino": "8.3.0",
+    "jsonwebtoken": "8.5.1",
     "@okta/jwt-verifier": "^2.3.0",
     "@prisma/client": "^3.0.2",
-    "dotenv": "^10.0.0",
-    "fastify": "^3.21.0"
+    "dotenv": "^10.0.0"
+  },
+  "prisma": {
+    "seed": "ts-node ./prisma/seed.ts"
   }
 }
