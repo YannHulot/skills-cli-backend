@@ -1,7 +1,7 @@
 import { createServer } from '../src/server';
 import Hapi, { AuthCredentials } from '@hapi/hapi';
 import { createUserCredentials } from './helpers/test-helpers';
-import { API_AUTH_STRATEGY } from '../src/plugins/auth';
+import { API_AUTH_STRATEGY } from '../src/types/auth';
 
 describe('users endpoints', () => {
   let server: Hapi.Server;
@@ -75,7 +75,7 @@ describe('users endpoints', () => {
     expect(response.statusCode).toEqual(400);
   });
 
-  test('get user returns 404 for non existant user', async () => {
+  test('get user returns 404 for non existent user', async () => {
     const response = await server.inject({
       method: 'GET',
       url: '/users/9999',

@@ -1,8 +1,35 @@
 import Hapi from '@hapi/hapi';
 import Joi from 'joi';
-import Boom from '@hapi/boom';
-import { API_AUTH_STRATEGY } from './auth';
+import { API_AUTH_STRATEGY } from '../types/auth';
 import { isRequestedUserOrAdmin, isAdmin } from '../auth-helpers';
+import {
+  getAuthenticatedUser,
+  getUsersHandler,
+  getUserHandler,
+  createUserHandler,
+  deleteUserHandler,
+  updateUserHandler,
+} from '../handlers/users';
+
+const userInputValidator = Joi.object({
+  firstName: Joi.string().alter({
+    create: (schema) => schema.required(),
+    update: (schema) => schema.optional(),
+  }),
+  lastName: Joi.string().alter({
+    create: (schema) => schema.required(),
+    update: (schema) => schema.optional(),
+  }),
+  email: Joi.string()
+    .email()
+    .alter({
+      create: (schema) => schema.required(),
+      update: (schema) => schema.optional(),
+    }),
+});
+
+const createUserValidator = userInputValidator.tailor('create');
+const updateUserValidator = userInputValidator.tailor('update');
 
 const usersPlugin = {
   name: 'app/users',
@@ -126,174 +153,3 @@ const usersPlugin = {
 };
 
 export default usersPlugin;
-
-const userInputValidator = Joi.object({
-  firstName: Joi.string().alter({
-    create: (schema) => schema.required(),
-    update: (schema) => schema.optional(),
-  }),
-  lastName: Joi.string().alter({
-    create: (schema) => schema.required(),
-    update: (schema) => schema.optional(),
-  }),
-  email: Joi.string()
-    .email()
-    .alter({
-      create: (schema) => schema.required(),
-      update: (schema) => schema.optional(),
-    }),
-  social: Joi.object({
-    facebook: Joi.string().optional(),
-    twitter: Joi.string().optional(),
-    github: Joi.string().optional(),
-    website: Joi.string().optional(),
-  }).optional(),
-});
-
-const createUserValidator = userInputValidator.tailor('create');
-const updateUserValidator = userInputValidator.tailor('update');
-
-interface UserInput {
-  firstName: string;
-  lastName: string;
-  email: string;
-}
-
-async function getUsersHandler(request: Hapi.Request, h: Hapi.ResponseToolkit) {
-  const { prisma } = request.server.app;
-
-  try {
-    const users = await prisma.user.findMany({
-      select: {
-        id: true,
-        email: true,
-        firstName: true,
-        lastName: true,
-      },
-    });
-    return h.response(users).code(200);
-  } catch (err) {
-    request.log('error', err);
-    return Boom.badImplementation('failed to get users');
-  }
-}
-
-async function getAuthenticatedUser(request: Hapi.Request, h: Hapi.ResponseToolkit) {
-  const { prisma } = request.server.app;
-  const { userId } = request.auth.credentials;
-
-  try {
-    const user = await prisma.user.findUnique({
-      select: {
-        id: true,
-        email: true,
-        firstName: true,
-        lastName: true,
-      },
-      where: {
-        id: userId,
-      },
-    });
-    return h.response(user || undefined).code(200);
-  } catch (err) {
-    request.log('error', err);
-    return Boom.badImplementation();
-  }
-}
-
-async function getUserHandler(request: Hapi.Request, h: Hapi.ResponseToolkit) {
-  const { prisma } = request.server.app;
-  const userId = parseInt(request.params.userId, 10);
-
-  try {
-    const user = await prisma.user.findUnique({
-      where: {
-        id: userId,
-      },
-      select: {
-        id: true,
-        email: true,
-        firstName: true,
-        lastName: true,
-      },
-    });
-    if (!user) {
-      return h.response().code(404);
-    } else {
-      return h.response(user).code(200);
-    }
-  } catch (err) {
-    request.log('error', err);
-    return Boom.badImplementation('failed to get user');
-  }
-}
-
-async function createUserHandler(request: Hapi.Request, h: Hapi.ResponseToolkit) {
-  const { prisma } = request.server.app;
-  const payload = request.payload as UserInput;
-
-  try {
-    const createdUser = await prisma.user.create({
-      data: {
-        firstName: payload.firstName,
-        lastName: payload.lastName,
-        email: payload.email,
-      },
-      select: {
-        id: true,
-        email: true,
-        firstName: true,
-        lastName: true,
-      },
-    });
-    return h.response(createdUser).code(201);
-  } catch (err) {
-    request.log('error', err);
-    return Boom.badImplementation('failed to create user');
-  }
-}
-
-async function deleteUserHandler(request: Hapi.Request, h: Hapi.ResponseToolkit) {
-  const { prisma } = request.server.app;
-  const userId = parseInt(request.params.userId, 10);
-
-  try {
-    // Delete all enrollments
-    await prisma.$transaction([
-      prisma.token.deleteMany({
-        where: {
-          userId: userId,
-        },
-      }),
-      prisma.user.delete({
-        where: {
-          id: userId,
-        },
-      }),
-    ]);
-
-    return h.response().code(204);
-  } catch (err) {
-    request.log('error', err);
-    return Boom.badImplementation('failed to delete user');
-  }
-}
-
-async function updateUserHandler(request: Hapi.Request, h: Hapi.ResponseToolkit) {
-  const { prisma } = request.server.app;
-  const userId = parseInt(request.params.userId, 10);
-  const payload = request.payload as Partial<UserInput>;
-
-  try {
-    const updatedUser = await prisma.user.update({
-      where: {
-        id: userId,
-      },
-      data: payload,
-    });
-    return h.response(updatedUser).code(200);
-  } catch (err) {
-    request.log('error', err);
-    return Boom.badImplementation('failed to update user');
-  }
-}

@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "prisma generate  tsc",
+    "build": "tsc",
     "start": "tsc && node dist/index.js",
     "prettier:fix": "prettier --write 'src/**/*.ts'",
     "dev": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/index.ts",
@@ -14,7 +14,6 @@
     "check-lint": "eslint 'src/**/*.ts'",
     "prepare": "husky install",
     "seed": "prisma db seed --preview-feature",
-    "seed-users": "ts-node ./src/seed-users.ts",
     "test": "TEST=true jest -i",
     "test:watch": "TEST=true jest --watch",
     "postgres:start": "docker-compose up -d",
