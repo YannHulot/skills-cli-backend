@@ -1,6 +1,6 @@
 import { createServer } from '../src/server';
 import Hapi, { AuthCredentials } from '@hapi/hapi';
-import { createUserCredentials } from './helpers/test-helpers';
+import { createUserCredentials } from './helpers/users';
 import { API_AUTH_STRATEGY } from '../src/types/auth';
 
 describe('users endpoints', () => {

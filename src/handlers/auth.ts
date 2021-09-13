@@ -1,6 +1,5 @@
 import Hapi from '@hapi/hapi';
 import Boom from '@hapi/boom';
-import jwt from 'jsonwebtoken';
 import { TokenType } from '@prisma/client';
 import { add } from 'date-fns';
 import {
@@ -10,9 +9,8 @@ import {
   LoginInput,
   AuthenticateInput,
   AUTHENTICATION_TOKEN_EXPIRATION_HOURS,
-  JWT_SECRET,
-  JWT_ALGORITHM,
 } from '../types/auth';
+import { generateAuthToken, generateEmailToken } from '../helpers/jwt';
 
 // Function will be called on every request using the auth strategy
 export const validateAPIToken = async (decoded: APITokenPayload, request: Hapi.Request) => {
@@ -173,19 +171,4 @@ export const authenticateHandler = async (request: Hapi.Request, h: Hapi.Respons
   } catch (error) {
     return Boom.badImplementation(error.message);
   }
-};
-
-// Generate a signed JWT token with the tokenId in the payload
-const generateAuthToken = (tokenId: number): string => {
-  const jwtPayload = { tokenId };
-
-  return jwt.sign(jwtPayload, JWT_SECRET, {
-    algorithm: JWT_ALGORITHM,
-    noTimestamp: true,
-  });
-};
-
-// Generate a random 8 digit number as the email token
-const generateEmailToken = (): string => {
-  return Math.floor(10000000 + Math.random() * 90000000).toString();
 };

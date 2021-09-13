@@ -1,7 +1,7 @@
 import Hapi from '@hapi/hapi';
 import Joi from 'joi';
 import { API_AUTH_STRATEGY } from '../types/auth';
-import { isRequestedUserOrAdmin, isAdmin } from '../auth-helpers';
+import { isRequestedUserOrAdmin, isAdmin } from '../helpers/auth';
 import {
   getAuthenticatedUser,
   getUsersHandler,
