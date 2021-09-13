@@ -4,13 +4,13 @@ import { TokenType } from '@prisma/client';
 import { add } from 'date-fns';
 import {
   APITokenPayload,
-  apiTokenSchema,
   EMAIL_TOKEN_EXPIRATION_MINUTES,
   LoginInput,
   AuthenticateInput,
   AUTHENTICATION_TOKEN_EXPIRATION_HOURS,
 } from '../types/auth';
 import { generateAuthToken, generateEmailToken } from '../helpers/jwt';
+import { apiTokenSchema } from '../validators/auth';
 
 // Function will be called on every request using the auth strategy
 export const validateAPIToken = async (decoded: APITokenPayload, request: Hapi.Request) => {

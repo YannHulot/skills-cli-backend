@@ -1,5 +1,4 @@
 import Hapi from '@hapi/hapi';
-import Joi from 'joi';
 import { API_AUTH_STRATEGY } from '../types/auth';
 import { isRequestedUserOrAdmin, isAdmin } from '../helpers/auth';
 import {
@@ -10,26 +9,8 @@ import {
   deleteUserHandler,
   updateUserHandler,
 } from '../handlers/users';
-
-const userInputValidator = Joi.object({
-  firstName: Joi.string().alter({
-    create: (schema) => schema.required(),
-    update: (schema) => schema.optional(),
-  }),
-  lastName: Joi.string().alter({
-    create: (schema) => schema.required(),
-    update: (schema) => schema.optional(),
-  }),
-  email: Joi.string()
-    .email()
-    .alter({
-      create: (schema) => schema.required(),
-      update: (schema) => schema.optional(),
-    }),
-});
-
-const createUserValidator = userInputValidator.tailor('create');
-const updateUserValidator = userInputValidator.tailor('update');
+import { createUserValidator, updateUserValidator } from '../validators/user';
+import { userIdValidator } from '../validators/user';
 
 const usersPlugin = {
   name: 'app/users',
@@ -76,9 +57,7 @@ const usersPlugin = {
             strategy: API_AUTH_STRATEGY,
           },
           validate: {
-            params: Joi.object({
-              userId: Joi.number().integer(),
-            }),
+            params: userIdValidator,
             failAction: (_request, _h, err) => {
               // show validation errors to user https://github.com/hapijs/hapi/issues/3706
               throw err;
@@ -116,9 +95,7 @@ const usersPlugin = {
             strategy: API_AUTH_STRATEGY,
           },
           validate: {
-            params: Joi.object({
-              userId: Joi.number().integer(),
-            }),
+            params: userIdValidator,
             failAction: (_request, _h, err) => {
               // show validation errors to user https://github.com/hapijs/hapi/issues/3706
               throw err;
@@ -137,9 +114,7 @@ const usersPlugin = {
             strategy: API_AUTH_STRATEGY,
           },
           validate: {
-            params: Joi.object({
-              userId: Joi.number().integer(),
-            }),
+            params: userIdValidator,
             payload: updateUserValidator,
             failAction: (_request, _h, err) => {
               // show validation errors to user https://github.com/hapijs/hapi/issues/3706

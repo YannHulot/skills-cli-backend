@@ -1,7 +1,7 @@
 import Hapi from '@hapi/hapi';
-import Joi from 'joi';
 import { API_AUTH_STRATEGY, JWT_ALGORITHM, JWT_SECRET } from '../types/auth';
 import { validateAPIToken, loginHandler, authenticateHandler } from '../handlers/auth';
+import { emailValidator, emailAndTokenValidator } from '../validators/auth';
 
 declare module '@hapi/hapi' {
   interface AuthCredentials {
@@ -41,9 +41,7 @@ const authPlugin: Hapi.Plugin<null> = {
               // show validation errors to user https://github.com/hapijs/hapi/issues/3706
               throw err;
             },
-            payload: Joi.object({
-              email: Joi.string().email().required(),
-            }),
+            payload: emailValidator,
           },
         },
       },
@@ -55,10 +53,7 @@ const authPlugin: Hapi.Plugin<null> = {
         options: {
           auth: false,
           validate: {
-            payload: Joi.object({
-              email: Joi.string().email().required(),
-              emailToken: Joi.string().required(),
-            }),
+            payload: emailAndTokenValidator,
           },
         },
       },

@@ -1,12 +1,11 @@
 # Skills CLI back-end
 
-Hey there! This is a v1 of my personal website.
+Hey there! This is the v1 of an experimental service.
 
-What is Linkedin existed a s a CLI? Well, this is the back-end of such a project.
+What if Linkedin existed as a CLI? Well, this is the back-end of such a project.
 This application stores data related to users.
 
-Users have jobs and each jobs contains, skills, descriptions and title.
-By using this API you can save a new user, add jobs, skills, and finally search for a user with a specific skill.
+Users have jobs and each job contains, skills, descriptions and title.
 
 ## Local Development
 
@@ -28,6 +27,31 @@ So to set things up you need to run:
 npm install
 ```
 
+Then to build the application and generate the schema:
+
+```bash
+npm run build
+```
+
+create an .env file:
+
+```bash
+touch .env
+```
+
+Create a JWT secret:
+
+```bash
+node -e "console.log(require('crypto').randomBytes(256).toString('base64'));"
+```
+
+Add the following lines in the .env file:
+
+```.env
+SENDGRID_API_KEY=
+JWT_SECRET=secret-you-generated-at-the-previous-step
+```
+
 Then to run the development server:
 
 ```bash
@@ -42,9 +66,8 @@ You ll need to get a bearer token and add it to your headers when making a reque
 ## Deployment
 
 TBD
-## Credits
 
-The avatars are made by [getavataaars](https://getavataaars.com/).
+## Credits
 
 Made with Love and :coffee:
 
