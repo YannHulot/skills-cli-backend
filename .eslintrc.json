@@ -4,7 +4,8 @@
     "plugin:@typescript-eslint/recommended",
     "airbnb",
     "plugin:prettier/recommended",
-    "prettier/@typescript-eslint"
+    "prettier",
+    "plugin:import/typescript"
   ],
   "parser": "@typescript-eslint/parser",
   "plugins": [
@@ -19,5 +20,17 @@
     ],
     "@typescript-eslint/no-unused-vars": "error",
     "@typescript-eslint/no-explicit-any": "error"
-  }
+  },
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "extensions": [
+          ".js",
+          ".jsx",
+          ".ts",
+          ".tsx"
+        ]
+      }
+    }
+  },
 }
