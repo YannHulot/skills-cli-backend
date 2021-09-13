@@ -1,9 +1,9 @@
 import { Plugin } from '@hapi/hapi';
-import statusRoutes from '../routes/status';
+import routes from '../routes/status';
 
 const statusPlugin: Plugin<null> = {
   name: 'app/status',
-  register: statusRoutes,
+  register: routes,
 };
 
 export default statusPlugin;

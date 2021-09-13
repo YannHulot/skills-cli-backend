@@ -1,10 +1,10 @@
 import { Plugin } from '@hapi/hapi';
-import userRoutes from '../routes/users';
+import routes from '../routes/users';
 
 const usersPlugin: Plugin<null> = {
   name: 'app/users',
   dependencies: ['prisma'],
-  register: userRoutes,
+  register: routes,
 };
 
 export default usersPlugin;

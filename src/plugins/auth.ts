@@ -1,5 +1,5 @@
 import { Plugin } from '@hapi/hapi';
-import authRoutes from '../routes/auth';
+import routes from '../routes/auth';
 
 declare module '@hapi/hapi' {
   interface AuthCredentials {
@@ -12,7 +12,7 @@ declare module '@hapi/hapi' {
 const authPlugin: Plugin<null> = {
   name: 'app/auth',
   dependencies: ['prisma', 'hapi-auth-jwt2', 'app/email'],
-  register: authRoutes,
+  register: routes,
 };
 
 export default authPlugin;
