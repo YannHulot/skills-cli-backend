@@ -1,0 +1,17 @@
+name: Build Application
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: actions/setup-node@v2.1.5
+        with:
+          node-version: 16.5
+      - run: npm install
+      - run: npm run build

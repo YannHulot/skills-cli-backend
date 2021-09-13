@@ -1,24 +1,24 @@
-import OktaJwtVerifier from "@okta/jwt-verifier";
-import { FastifyRequest, FastifyReply } from 'fastify'
+import OktaJwtVerifier from '@okta/jwt-verifier';
+import { FastifyRequest, FastifyReply } from 'fastify';
 
-const middlewareVerifier = async (request: FastifyRequest, response: FastifyReply) => {
-  const issuer = process.env.OKTA_ISSUER
-  const clientId = process.env.OKTA_CLIENT_ID
-  const audience = process.env.OKTA_AUDIENCE
+const middlewareVerifier = async (request: FastifyRequest, response: FastifyReply): Promise<void> => {
+  const issuer = process.env.OKTA_ISSUER;
+  const clientId = process.env.OKTA_CLIENT_ID;
+  const audience = process.env.OKTA_AUDIENCE;
 
   if (!issuer || !clientId || !audience) {
     response.code(401).send({ error: 'invalid env variables' });
-    return
+    return;
   }
 
   const { authorization } = request.headers;
 
   if (!authorization) {
     response.code(401).send({ error: 'authorization header missing' });
-    return
+    return;
   }
 
-  const [, token] = authorization.trim().split(" ");
+  const [, token] = authorization.trim().split(' ');
   const oktaJwtVerifier = new OktaJwtVerifier({
     issuer,
     clientId,
@@ -29,24 +29,21 @@ const middlewareVerifier = async (request: FastifyRequest, response: FastifyRepl
 
     if (!claims) {
       response.code(401).send({ error: 'claims missing' });
-      return
+      return;
     }
 
     if (!claims.scp) {
       response.code(401).send({ error: 'scp missing' });
-      return
+      return;
     }
 
-    if (claims.scp && !claims.scp.includes("api")) {
-      response.code(401).send({ error: 'wrong claim' });;
-      return
+    if (claims.scp && !claims.scp.includes('api')) {
+      response.code(401).send({ error: 'wrong claim' });
+      return;
     }
-  }
-  catch (err) {
-    console.log(err);
-    response.code(401).send({ error: 'generic error' })
-    return
+  } catch (err) {
+    response.code(401).send({ error: 'generic error' });
   }
 };
 
-export default middlewareVerifier
+export default middlewareVerifier;

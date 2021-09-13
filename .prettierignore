@@ -1,0 +1,12 @@
+node_modules
+package-lock.json
+.eslintrc.js
+.github
+.prettierrc
+tsconfig.json
+.vscode
+context
+docker-compose.yml
+README.md
+package.json
+dist/
