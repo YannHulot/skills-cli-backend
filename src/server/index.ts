@@ -22,8 +22,8 @@ export const createServer = async (): Promise<Server> => {
     options: {
       logEvents: process.env.CI === 'true' || process.env.TEST === 'true' ? false : undefined,
       prettyPrint: process.env.NODE_ENV !== 'production',
-      // Redact Authorization headers, see https://getpino.io/#/docs/redaction
-      redact: ['req.headers.authorization'],
+      // Redact Authorization headers and emailtoken, see https://getpino.io/#/docs/redaction
+      redact: ['req.headers.authorization', 'req.headers.emailtoken'],
     },
   });
 
