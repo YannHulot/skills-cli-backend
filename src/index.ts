@@ -57,7 +57,7 @@ server.route<{ Body: IncomingUpdateUser }>({
     if (userOrError instanceof Error) {
       return { success: false, error: userOrError.message };
     } else {
-      return { success: false, payload: userOrError };
+      return { success: true, payload: userOrError };
     }
   },
 });

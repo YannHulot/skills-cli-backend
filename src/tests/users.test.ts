@@ -2,19 +2,23 @@ import { createUser, updateUser } from '../users';
 import { prismaMock } from '../singleton';
 import { Role } from '../types/helpers';
 
-test('should create new user ', async () => {
-  const user = {
-    id: 1,
+test('should create new user', async () => {
+  const payload = {
     firstName: 'Richie',
     email: 'hello@prisma.io',
     lastName: 'Rich',
+  };
+
+  const user = {
+    id: 1,
+    ...payload,
     createdAt: new Date('10/12/2015'),
     role: Role.USER,
   };
 
   prismaMock.user.create.mockResolvedValue(user);
 
-  await expect(createUser(user)).resolves.toEqual(user);
+  await expect(createUser(payload)).resolves.toEqual(user);
 });
 
 test('should update a user', async () => {

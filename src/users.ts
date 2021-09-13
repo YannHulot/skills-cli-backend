@@ -11,7 +11,7 @@ export const updateUser = async (user: IncomingUpdateUser) => {
   const existingUser = await prisma.user.findFirst({ where: { id: user.id } });
 
   if (!existingUser) {
-    return new Error('user does not exists');
+    return new Error('user does not exist');
   }
 
   console.log('should not come here');
