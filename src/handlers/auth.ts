@@ -44,6 +44,15 @@ export const validateAPIToken = async (decoded: APITokenPayload, request: Reques
       return { isValid: false, errorMessage: 'Token expired' };
     }
 
+    const currentJobs = await prisma.job.findMany({
+      where: {
+        userId: fetchedToken.userId,
+      },
+      select: {
+        id: true,
+      },
+    });
+
     // The token is valid. Pass the token payload (in `decoded`), userId, and isAdmin to `credentials`
     // which is available in route handlers via request.auth.credentials
     return {
@@ -52,6 +61,7 @@ export const validateAPIToken = async (decoded: APITokenPayload, request: Reques
         tokenId: decoded.tokenId,
         userId: fetchedToken.userId,
         isAdmin: fetchedToken.user.isAdmin,
+        currentJobs,
       },
     };
   } catch (error) {

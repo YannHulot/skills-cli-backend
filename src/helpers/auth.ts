@@ -31,6 +31,23 @@ export const isAdmin = async (request: Request, h: ResponseToolkit) => {
   throw Boom.forbidden();
 };
 
+// Pre function to check if user is the owner of the job of a job and can modify it
+export const isUserOwnerOfJobOrAdmin = async (request: Request, h: ResponseToolkit) => {
+  const { isAdmin, currentJobs } = request.auth.credentials;
+  const jobId = parseInt(request.params.jobId, 10);
+
+  if (isAdmin) {
+    // If the user is an admin allow
+    return h.continue;
+  }
+
+  if (currentJobs?.includes(jobId)) {
+    return h.continue;
+  }
+  // If the user is not the owner of the job, deny access
+  throw Boom.forbidden();
+};
+
 export const authStrategy = {
   mode: 'required' as AuthMode,
   strategy: API_AUTH_STRATEGY,

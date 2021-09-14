@@ -6,6 +6,7 @@ declare module '@hapi/hapi' {
     userId: number;
     tokenId: number;
     isAdmin: boolean;
+    currentJobs: number[];
   }
 }
 
