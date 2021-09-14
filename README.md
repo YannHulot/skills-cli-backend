@@ -141,6 +141,25 @@ curl -v -XGET -H 'Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbk
 
 Have fun exploring the other endpoints.
 
+## Tests
+
+Although incomplete, we have some test coverage to make sure the endpoints work as expected.
+
+To run the tests
+
+```bash
+npm run test
+```
+
+## Deployment
+
+TBD
+
+## CI/CD
+
+We are building the application and running the tests as part of the PR process.
+
+
 ## Things needed to improve the API
 
 - Version the API
@@ -153,14 +172,6 @@ Have fun exploring the other endpoints.
 - Add github action to deploy the application on Heroku(or Google Cloud/AWS/Azure)
 
 Among other things...
-
-## Deployment
-
-TBD
-
-## CI/CD
-
-We are building the application and running the tests as part of the PR process.
 
 ## Credits
 
