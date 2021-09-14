@@ -8,7 +8,7 @@ import {
   deleteJobsHandler,
   updateJobHandler,
 } from '../handlers/jobs';
-import { authStrategy, isAdmin, isRequestedUserOrAdmin, isUserOwnerOfJobOrAdmin } from '../helpers/auth';
+import { authStrategy, isAdmin, isUserOwnerOfJobOrAdmin } from '../helpers/auth';
 import { failActionHandler } from '../handlers/fail';
 import { jobIdValidator, createJobValidator, updateJobValidator } from '../validators/jobs';
 
@@ -39,7 +39,7 @@ const routes = async (server: Server) => {
       path: '/jobs/{jobId}',
       handler: getJobHandler,
       options: {
-        pre: [isRequestedUserOrAdmin],
+        pre: [isUserOwnerOfJobOrAdmin],
         auth: authStrategy,
         validate: {
           params: jobIdValidator,
@@ -52,7 +52,6 @@ const routes = async (server: Server) => {
       path: '/jobs',
       handler: createJobHandler,
       options: {
-        pre: [isRequestedUserOrAdmin],
         auth: authStrategy,
         validate: {
           payload: createJobValidator,
@@ -78,7 +77,6 @@ const routes = async (server: Server) => {
       path: '/jobs',
       handler: deleteJobsHandler,
       options: {
-        pre: [isRequestedUserOrAdmin],
         auth: authStrategy,
       },
     },

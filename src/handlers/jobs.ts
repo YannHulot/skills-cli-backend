@@ -96,13 +96,8 @@ export const createJobHandler = async (request: Request, h: ResponseToolkit) => 
   const { prisma } = request.server.app;
   const { userId } = request.auth.credentials;
   const payload = request.payload as JobInput;
-
-  console.log('payload: ', payload);
-
   const startDate = parse(payload.startDate, 'dd-MM-yyyy', new Date());
   const endDate = payload.endDate ? parse(payload.endDate, 'dd-MM-yyyy', new Date()) : null;
-
-  console.log('startDate: ', startDate);
 
   try {
     const createdJob = await prisma.job.create({
@@ -131,7 +126,6 @@ export const createJobHandler = async (request: Request, h: ResponseToolkit) => 
     });
     return h.response(createdJob).code(201);
   } catch (err) {
-    console.log('Error: ', err);
     request.log('error', err);
     return Boom.badImplementation('failed to create job');
   }

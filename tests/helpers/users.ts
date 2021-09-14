@@ -8,8 +8,6 @@ export const createUserCredentials = async (prisma: PrismaClient, isAdmin: boole
   const testUser = await prisma.user.create({
     data: {
       email: `test-${Date.now()}@test.com`,
-      firstName: `test-${Date.now()}`,
-      lastName: `test-${Date.now()}`,
       isAdmin,
       tokens: {
         create: {
