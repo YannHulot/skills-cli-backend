@@ -24,7 +24,7 @@ export const validateAPIToken = async (decoded: APITokenPayload, request: Reques
   }
 
   try {
-    // Fetch the token from DB to verify it's valid
+    // Fetch the token from DB
     const fetchedToken = await prisma.token.findUnique({
       where: {
         id: tokenId,
@@ -78,19 +78,19 @@ export const validateAPIToken = async (decoded: APITokenPayload, request: Reques
  * or it return the token in the payload and headers
  */
 export const loginHandler = async (request: Request, h: ResponseToolkit) => {
-  // 👇 get prisma and the sendEmailToken from shared application state
+  // get prisma and the sendEmailToken from shared application state
   const { prisma, sendEmailToken } = request.server.app;
-  // 👇 get the email from the request payload
+  // get the email from the request payload
   const { email } = request.payload as LoginInput;
-  // 👇 generate an alphanumeric token
+  // generate an alphanumeric token
   const emailToken = generateEmailToken();
-  // 👇 create a date object for the email token expiration
+  // create a date object for the email token expiration
   const tokenExpiration = add(new Date(), {
     minutes: EMAIL_TOKEN_EXPIRATION_MINUTES,
   });
 
   try {
-    // 👇 create a short lived token and update user or create if they don't exist
+    // create a short lived token and update user or create if they don't exist
     await prisma.token.create({
       data: {
         emailToken,
@@ -122,9 +122,9 @@ export const loginHandler = async (request: Request, h: ResponseToolkit) => {
 };
 
 export const authenticateHandler = async (request: Request, h: ResponseToolkit) => {
-  // 👇 get prisma from shared application state
+  // get prisma from shared application state
   const { prisma } = request.server.app;
-  // 👇 get the email and emailToken from the request payload
+  // get the email and emailToken from the request payload
   const { email, emailToken } = request.payload as AuthenticateInput;
 
   try {

@@ -17,11 +17,14 @@ const jobInputValidator = Joi.object({
     create: (schema) => schema.required(),
     update: (schema) => schema.optional(),
   }),
-  startDate: Joi.date().alter({
-    create: (schema) => schema.required(),
-    update: (schema) => schema.required(),
-  }),
+  startDate: Joi.date()
+    .raw()
+    .alter({
+      create: (schema) => schema.required(),
+      update: (schema) => schema.optional(),
+    }),
   endDate: Joi.date()
+    .raw()
     .greater(Joi.ref('startDate'))
     .alter({
       create: (schema) => schema.optional(),

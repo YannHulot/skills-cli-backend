@@ -19,7 +19,7 @@ export const getAuthenticatedUserJobs = async (request: Request, h: ResponseTool
         stack: true,
       },
       where: {
-        id: userId,
+        userId,
       },
     });
 
@@ -97,6 +97,13 @@ export const createJobHandler = async (request: Request, h: ResponseToolkit) => 
   const { userId } = request.auth.credentials;
   const payload = request.payload as JobInput;
 
+  console.log('payload: ', payload);
+
+  const startDate = parse(payload.startDate, 'dd-MM-yyyy', new Date());
+  const endDate = payload.endDate ? parse(payload.endDate, 'dd-MM-yyyy', new Date()) : null;
+
+  console.log('startDate: ', startDate);
+
   try {
     const createdJob = await prisma.job.create({
       data: {
@@ -104,8 +111,8 @@ export const createJobHandler = async (request: Request, h: ResponseToolkit) => 
         title: payload.title,
         description: payload.description,
         stack: payload.stack || [],
-        startDate: parse(payload.startDate, 'dd-MM-yyyy', new Date()),
-        endDate: payload.endDate ? parse(payload.endDate, 'dd-MM-yyyy', new Date()) : null,
+        startDate,
+        endDate,
         user: {
           connect: {
             id: userId,
@@ -124,6 +131,7 @@ export const createJobHandler = async (request: Request, h: ResponseToolkit) => 
     });
     return h.response(createdJob).code(201);
   } catch (err) {
+    console.log('Error: ', err);
     request.log('error', err);
     return Boom.badImplementation('failed to create job');
   }
@@ -167,13 +175,13 @@ export const deleteJobsHandler = async (request: Request, h: ResponseToolkit) =>
 
 export const updateJobHandler = async (request: Request, h: ResponseToolkit) => {
   const { prisma } = request.server.app;
-  const userId = parseInt(request.params.userId, 10);
+  const jobId = parseInt(request.params.jobId, 10);
   const payload = request.payload as Partial<JobInput>;
 
   try {
     const updatedJob = await prisma.job.update({
       where: {
-        id: userId,
+        id: jobId,
       },
       data: payload,
     });
