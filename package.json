@@ -1,7 +1,7 @@
 {
   "name": "skills-cli-backend",
   "version": "1.0.0",
-  "description": "",
+  "description": "This si the backend for a hypothetical CLI based linkedin/job board",
   "main": "index.js",
   "scripts": {
     "build": "prisma generate tsc",
@@ -20,7 +20,7 @@
     "db:push": "prisma migrate reset --force --preview-feature && prisma migrate deploy --preview-feature",
     "migrate:reset": "prisma migrate reset",
     "migrate:create": "prisma migrate dev --create-only",
-    "migrate:dev": "prisma migrate dev",
+    "migrate:dev": "prisma migrate dev --name init",
     "prisma:generate": "prisma generate"
   },
   "keywords": [],
