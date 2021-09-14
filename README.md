@@ -15,7 +15,15 @@ Please use at least Node v14, but the recommended version is Node v16.50. There'
 
 ## Dependency Diagram
 
+The dependency diagram is updated by a Github action.
+You can delete the action if necessary. It doesn't impact the functionality of the application in any way.
+
 ![Visualization of this repo](./diagram.svg)
+
+## Prerequisites
+
+Have Docker installed and running.
+You can download it at <https://docs.docker.com/desktop/mac/install/>
 
 ## Getting Started
 
@@ -50,11 +58,19 @@ You can live the SENDGRID_API_KEY below as blank for now as we won't need it.
 Add the following lines in the .env file:
 
 ```.env
+# Set the appropriate value for the Database
+DB_HOST=localhost
+DB_PORT=5432
+DB_SCHEMA=skills-cli-backend
+POSTGRES_USER=jerry
+POSTGRES_PASSWORD=seinfeld
+POSTGRES_DB=skills-cli-backend
+DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${DB_HOST}:${DB_PORT}/${POSTGRES_DB}?schema=${DB_SCHEMA}&sslmode=prefer
 SENDGRID_API_KEY=
 JWT_SECRET=secret-you-generated-at-the-previous-step
 ```
 
-Start Postgres
+Start the Postgres container
 
 ```bash
 docker-compose up -d
