@@ -11,9 +11,9 @@ declare module '@hapi/hapi' {
 }
 
 // plugin to instantiate Prisma Client
-const prismaPlugin: Plugin<null> = {
+const plugin: Plugin<null> = {
   name: 'prisma',
   register: prismaHandler,
 };
 
-export default prismaPlugin;
+export default plugin;

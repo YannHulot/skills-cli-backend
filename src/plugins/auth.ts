@@ -9,10 +9,10 @@ declare module '@hapi/hapi' {
   }
 }
 
-const authPlugin: Plugin<null> = {
+const plugin: Plugin<null> = {
   name: 'app/auth',
   dependencies: ['prisma', 'hapi-auth-jwt2', 'app/email'],
   register: routes,
 };
 
-export default authPlugin;
+export default plugin;

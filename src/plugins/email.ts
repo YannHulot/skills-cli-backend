@@ -9,9 +9,9 @@ declare module '@hapi/hapi' {
   }
 }
 
-const emailPlugin: Plugin<null> = {
+const plugin: Plugin<null> = {
   name: 'app/email',
   register: emailSender,
 };
 
-export default emailPlugin;
+export default plugin;
