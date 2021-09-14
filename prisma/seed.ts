@@ -5,29 +5,29 @@ import { add, sub } from 'date-fns';
 const prisma = new PrismaClient();
 
 // A `main` function so that we can use async/await
-async function main() {
+const main = async () => {
   await prisma.token.deleteMany({});
   await prisma.user.deleteMany({});
   await prisma.job.deleteMany({});
 
   const oneYearAgo = add(new Date(), { years: 1 });
-  const twoYearsAgo = sub(new Date(), { years: 2 });
+  const tenYearsAgo = sub(new Date(), { years: 10 });
 
   await prisma.user.create({
     data: {
-      email: 'yann.developer@gmail.com',
-      firstName: 'Yann',
-      lastName: 'Hulot',
+      email: 'steve.jobs@apple.com',
+      firstName: 'Steve',
+      lastName: 'Jobs',
       isAdmin: true,
       jobs: {
         create: [
           {
-            startDate: twoYearsAgo,
+            startDate: tenYearsAgo,
             endDate: oneYearAgo,
             companyName: 'Apple',
-            title: 'Software Engineer II',
-            description: 'Fixing bugs and working on MacOS',
-            stack: ['Swift', 'TS', 'React'],
+            title: 'CEO',
+            description: 'Save Apple from bankruptcy. Develop the IPad, the IPOD and build a trillion $ company',
+            stack: ['Swift', 'MacOS', 'IPadOS'],
           },
         ],
       },
@@ -36,7 +36,7 @@ async function main() {
       jobs: true,
     },
   });
-}
+};
 
 main()
   .catch((e: Error) => {
