@@ -1,5 +1,6 @@
 import Boom from '@hapi/boom';
-import { Request, ResponseToolkit } from '@hapi/hapi';
+import { Request, ResponseToolkit, AuthMode } from '@hapi/hapi';
+import { API_AUTH_STRATEGY } from '../types/auth';
 
 // Pre function to check if the authenticated user matches the requested user
 export const isRequestedUserOrAdmin = async (request: Request, h: ResponseToolkit) => {
@@ -28,4 +29,9 @@ export const isAdmin = async (request: Request, h: ResponseToolkit) => {
 
   // The authenticated user is not an admin
   throw Boom.forbidden();
+};
+
+export const authStrategy = {
+  mode: 'required' as AuthMode,
+  strategy: API_AUTH_STRATEGY,
 };

@@ -1,6 +1,5 @@
 import { Server } from '@hapi/hapi';
-import { API_AUTH_STRATEGY } from '../types/auth';
-import { isRequestedUserOrAdmin, isAdmin } from '../helpers/auth';
+import { isRequestedUserOrAdmin, isAdmin, authStrategy } from '../helpers/auth';
 import {
   getAuthenticatedUser,
   getUsersHandler,
@@ -20,10 +19,7 @@ const routes = async (server: Server) => {
       path: '/profile',
       handler: getAuthenticatedUser,
       options: {
-        auth: {
-          mode: 'required',
-          strategy: API_AUTH_STRATEGY,
-        },
+        auth: authStrategy,
       },
     },
     {
@@ -32,10 +28,7 @@ const routes = async (server: Server) => {
       handler: getUsersHandler,
       options: {
         pre: [isAdmin],
-        auth: {
-          mode: 'required',
-          strategy: API_AUTH_STRATEGY,
-        },
+        auth: authStrategy,
         validate: {
           failAction: failActionHandler,
         },
@@ -47,10 +40,7 @@ const routes = async (server: Server) => {
       handler: getUserHandler,
       options: {
         pre: [isRequestedUserOrAdmin],
-        auth: {
-          mode: 'required',
-          strategy: API_AUTH_STRATEGY,
-        },
+        auth: authStrategy,
         validate: {
           params: userIdValidator,
           failAction: failActionHandler,
@@ -63,10 +53,7 @@ const routes = async (server: Server) => {
       handler: createUserHandler,
       options: {
         pre: [isAdmin],
-        auth: {
-          mode: 'required',
-          strategy: API_AUTH_STRATEGY,
-        },
+        auth: authStrategy,
         validate: {
           payload: createUserValidator,
           failAction: failActionHandler,
@@ -79,10 +66,7 @@ const routes = async (server: Server) => {
       handler: deleteUserHandler,
       options: {
         pre: [isRequestedUserOrAdmin],
-        auth: {
-          mode: 'required',
-          strategy: API_AUTH_STRATEGY,
-        },
+        auth: authStrategy,
         validate: {
           params: userIdValidator,
           failAction: failActionHandler,
@@ -95,10 +79,7 @@ const routes = async (server: Server) => {
       handler: updateUserHandler,
       options: {
         pre: [isRequestedUserOrAdmin],
-        auth: {
-          mode: 'required',
-          strategy: API_AUTH_STRATEGY,
-        },
+        auth: authStrategy,
         validate: {
           params: userIdValidator,
           payload: updateUserValidator,

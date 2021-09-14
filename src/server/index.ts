@@ -5,6 +5,7 @@ import emailPlugin from '../plugins/email';
 import usersPlugin from '../plugins/users';
 import statusPlugin from '../plugins/status';
 import authPlugin from '../plugins/auth';
+import jobsPlugin from '../plugins/jobs';
 import dotenv from 'dotenv';
 import hapiPino from 'hapi-pino';
 
@@ -27,7 +28,7 @@ export const createServer = async (): Promise<Server> => {
     },
   });
 
-  await server.register([hapiAuthJWT, authPlugin, prismaPlugin, emailPlugin, statusPlugin, usersPlugin]);
+  await server.register([hapiAuthJWT, authPlugin, prismaPlugin, emailPlugin, statusPlugin, usersPlugin, jobsPlugin]);
   await server.initialize();
   return server;
 };
