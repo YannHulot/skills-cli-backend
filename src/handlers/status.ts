@@ -1,13 +1,5 @@
-import Hapi from '@hapi/hapi';
+import { Request, ResponseToolkit } from '@hapi/hapi';
 
-export const statusHandler = async (server: Hapi.Server) => {
-  server.route({
-    // default status endpoint
-    method: 'GET',
-    path: '/',
-    handler: (_, h: Hapi.ResponseToolkit) => h.response({ up: true }).code(200),
-    options: {
-      auth: false,
-    },
-  });
+export const statusHandler = (_request: Request, h: ResponseToolkit) => {
+  return h.response({ up: true }).code(200);
 };

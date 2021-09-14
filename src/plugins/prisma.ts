@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import Hapi from '@hapi/hapi';
+import { Plugin } from '@hapi/hapi';
 import { prismaHandler } from '../handlers/prisma';
 
 // Module augmentation to add shared application state
@@ -11,9 +11,9 @@ declare module '@hapi/hapi' {
 }
 
 // plugin to instantiate Prisma Client
-const prismaPlugin: Hapi.Plugin<null> = {
+const plugin: Plugin<null> = {
   name: 'prisma',
   register: prismaHandler,
 };
 
-export default prismaPlugin;
+export default plugin;

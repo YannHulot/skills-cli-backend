@@ -1,8 +1,8 @@
-import Hapi from '@hapi/hapi';
+import { Request, ResponseToolkit } from '@hapi/hapi';
 import Boom from '@hapi/boom';
 import { UserInput } from '../types/users';
 
-export const getUsersHandler = async (request: Hapi.Request, h: Hapi.ResponseToolkit) => {
+export const getUsersHandler = async (request: Request, h: ResponseToolkit) => {
   const { prisma } = request.server.app;
 
   try {
@@ -21,7 +21,7 @@ export const getUsersHandler = async (request: Hapi.Request, h: Hapi.ResponseToo
   }
 };
 
-export const getAuthenticatedUser = async (request: Hapi.Request, h: Hapi.ResponseToolkit) => {
+export const getAuthenticatedUser = async (request: Request, h: ResponseToolkit) => {
   const { prisma } = request.server.app;
   const { userId } = request.auth.credentials;
 
@@ -37,14 +37,19 @@ export const getAuthenticatedUser = async (request: Hapi.Request, h: Hapi.Respon
         id: userId,
       },
     });
-    return h.response(user || undefined).code(200);
+
+    if (!user) {
+      return h.response().code(404);
+    } else {
+      return h.response(user).code(200);
+    }
   } catch (err) {
     request.log('error', err);
     return Boom.badImplementation();
   }
 };
 
-export const getUserHandler = async (request: Hapi.Request, h: Hapi.ResponseToolkit) => {
+export const getUserHandler = async (request: Request, h: ResponseToolkit) => {
   const { prisma } = request.server.app;
   const userId = parseInt(request.params.userId, 10);
 
@@ -60,8 +65,9 @@ export const getUserHandler = async (request: Hapi.Request, h: Hapi.ResponseTool
         lastName: true,
       },
     });
+
     if (!user) {
-      return h.response().code(404);
+      return Boom.notFound();
     } else {
       return h.response(user).code(200);
     }
@@ -71,7 +77,7 @@ export const getUserHandler = async (request: Hapi.Request, h: Hapi.ResponseTool
   }
 };
 
-export const createUserHandler = async (request: Hapi.Request, h: Hapi.ResponseToolkit) => {
+export const createUserHandler = async (request: Request, h: ResponseToolkit) => {
   const { prisma } = request.server.app;
   const payload = request.payload as UserInput;
 
@@ -96,7 +102,7 @@ export const createUserHandler = async (request: Hapi.Request, h: Hapi.ResponseT
   }
 };
 
-export const deleteUserHandler = async (request: Hapi.Request, h: Hapi.ResponseToolkit) => {
+export const deleteUserHandler = async (request: Request, h: ResponseToolkit) => {
   const { prisma } = request.server.app;
   const userId = parseInt(request.params.userId, 10);
 
@@ -122,7 +128,7 @@ export const deleteUserHandler = async (request: Hapi.Request, h: Hapi.ResponseT
   }
 };
 
-export const updateUserHandler = async (request: Hapi.Request, h: Hapi.ResponseToolkit) => {
+export const updateUserHandler = async (request: Request, h: ResponseToolkit) => {
   const { prisma } = request.server.app;
   const userId = parseInt(request.params.userId, 10);
   const payload = request.payload as Partial<UserInput>;

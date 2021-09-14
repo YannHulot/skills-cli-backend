@@ -8,8 +8,6 @@ export const createUserCredentials = async (prisma: PrismaClient, isAdmin: boole
   const testUser = await prisma.user.create({
     data: {
       email: `test-${Date.now()}@test.com`,
-      firstName: `test-${Date.now()}`,
-      lastName: `test-${Date.now()}`,
       isAdmin,
       tokens: {
         create: {
@@ -20,6 +18,11 @@ export const createUserCredentials = async (prisma: PrismaClient, isAdmin: boole
     },
     include: {
       tokens: true,
+      jobs: {
+        select: {
+          id: true,
+        },
+      },
     },
   });
 
@@ -27,5 +30,6 @@ export const createUserCredentials = async (prisma: PrismaClient, isAdmin: boole
     userId: testUser.id,
     tokenId: testUser.tokens[0].id,
     isAdmin: testUser.isAdmin,
+    currentJobs: testUser.jobs?.map(({ id }) => id),
   };
 };

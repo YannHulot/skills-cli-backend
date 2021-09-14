@@ -1,4 +1,4 @@
-import Hapi from '@hapi/hapi';
+import { Request, ResponseToolkit } from '@hapi/hapi';
 import Boom from '@hapi/boom';
 import { TokenType } from '@prisma/client';
 import { add } from 'date-fns';
@@ -12,19 +12,19 @@ import {
 import { generateAuthToken, generateEmailToken } from '../helpers/jwt';
 import { apiTokenSchema } from '../validators/auth';
 
-// Function will be called on every request using the auth strategy
-export const validateAPIToken = async (decoded: APITokenPayload, request: Hapi.Request) => {
+// This function will be called on every request using the auth strategy
+export const validateAPIToken = async (decoded: APITokenPayload, request: Request) => {
   const { prisma } = request.server.app;
   const { tokenId } = decoded;
-  const { error } = apiTokenSchema.validate(decoded);
 
+  const { error } = apiTokenSchema.validate(decoded);
   if (error) {
     request.log(['error', 'auth'], `API token error: ${error.message}`);
-    return { isValid: false };
+    return { isValid: false, errorMessage: 'Invalid token' };
   }
 
   try {
-    // Fetch the token from DB to verify it's valid
+    // Fetch the token from DB
     const fetchedToken = await prisma.token.findUnique({
       where: {
         id: tokenId,
@@ -44,6 +44,15 @@ export const validateAPIToken = async (decoded: APITokenPayload, request: Hapi.R
       return { isValid: false, errorMessage: 'Token expired' };
     }
 
+    const currentJobs = await prisma.job.findMany({
+      where: {
+        userId: fetchedToken.userId,
+      },
+      select: {
+        id: true,
+      },
+    });
+
     // The token is valid. Pass the token payload (in `decoded`), userId, and isAdmin to `credentials`
     // which is available in route handlers via request.auth.credentials
     return {
@@ -52,6 +61,7 @@ export const validateAPIToken = async (decoded: APITokenPayload, request: Hapi.R
         tokenId: decoded.tokenId,
         userId: fetchedToken.userId,
         isAdmin: fetchedToken.user.isAdmin,
+        currentJobs,
       },
     };
   } catch (error) {
@@ -63,23 +73,24 @@ export const validateAPIToken = async (decoded: APITokenPayload, request: Hapi.R
 /**
  * Login/Registration handler
  *
- * Because there are no passwords, the same endpoint is used for login and registration
- * Generates a short lived verification token and sends an email
+ * Because there are no passwords, the same endpoint is used for login and authentication
+ * It generates a short lived verification token and sends an email if a sendgrid API key is present in the environment
+ * or it return the token in the payload and headers
  */
-export const loginHandler = async (request: Hapi.Request, h: Hapi.ResponseToolkit) => {
-  // 👇 get prisma and the sendEmailToken from shared application state
+export const loginHandler = async (request: Request, h: ResponseToolkit) => {
+  // get prisma and the sendEmailToken from shared application state
   const { prisma, sendEmailToken } = request.server.app;
-  // 👇 get the email from the request payload
+  // get the email from the request payload
   const { email } = request.payload as LoginInput;
-  // 👇 generate an alphanumeric token
+  // generate an alphanumeric token
   const emailToken = generateEmailToken();
-  // 👇 create a date object for the email token expiration
+  // create a date object for the email token expiration
   const tokenExpiration = add(new Date(), {
     minutes: EMAIL_TOKEN_EXPIRATION_MINUTES,
   });
 
   try {
-    // 👇 create a short lived token and update user or create if they don't exist
+    // create a short lived token and update user or create if they don't exist
     await prisma.token.create({
       data: {
         emailToken,
@@ -89,8 +100,6 @@ export const loginHandler = async (request: Hapi.Request, h: Hapi.ResponseToolki
           connectOrCreate: {
             create: {
               email,
-              firstName: 'auth-firstName-automated',
-              lastName: 'auth-lastName-automated',
             },
             where: {
               email,
@@ -100,18 +109,22 @@ export const loginHandler = async (request: Hapi.Request, h: Hapi.ResponseToolki
       },
     });
 
-    // 👇 send the email token
-    await sendEmailToken(email, emailToken);
-    return h.response().code(200);
+    // if we don't have a Sendgrid API key set in our environment, then we just return the token as part of the response payload
+    // and in the headers for easier and faster testing purposes
+    if (!process.env.SENDGRID_API_KEY) {
+      return h.response({ emailToken }).header('EmailToken', emailToken).code(200);
+    } else {
+      await sendEmailToken(email, emailToken);
+    }
   } catch (error) {
     return Boom.badImplementation(error.message);
   }
 };
 
-export const authenticateHandler = async (request: Hapi.Request, h: Hapi.ResponseToolkit) => {
-  // 👇 get prisma from shared application state
+export const authenticateHandler = async (request: Request, h: ResponseToolkit) => {
+  // get prisma from shared application state
   const { prisma } = request.server.app;
-  // 👇 get the email and emailToken from the request payload
+  // get the email and emailToken from the request payload
   const { email, emailToken } = request.payload as AuthenticateInput;
 
   try {
@@ -140,6 +153,7 @@ export const authenticateHandler = async (request: Hapi.Request, h: Hapi.Respons
       const tokenExpiration = add(new Date(), {
         hours: AUTHENTICATION_TOKEN_EXPIRATION_HOURS,
       });
+
       // Persist token in DB so it's stateful
       const createdToken = await prisma.token.create({
         data: {

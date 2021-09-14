@@ -1,8 +1,8 @@
 import { createServer } from '../src/server';
-import Hapi from '@hapi/hapi';
+import { Server } from '@hapi/hapi';
 
 describe('Status plugin', () => {
-  let server: Hapi.Server;
+  let server: Server;
 
   beforeAll(async () => {
     server = await createServer();
@@ -17,6 +17,7 @@ describe('Status plugin', () => {
       method: 'GET',
       url: '/',
     });
+
     expect(res.statusCode).toEqual(200);
     const response = JSON.parse(res.payload);
     expect(response.up).toEqual(true);
