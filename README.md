@@ -45,6 +45,8 @@ Create a JWT secret and copy it in the .env file in the next step:
 node -e "console.log(require('crypto').randomBytes(256).toString('base64'));"
 ```
 
+You can live the SENDGRID_API_KEY below as blank for now as we won't need it.
+
 Add the following lines in the .env file:
 
 ```.env
@@ -77,12 +79,73 @@ A basic user can only interact with its own resources.
 
 An admin can do anything(not good!!!!)
 
+## How to use the API
+
+There is already a seeded user in the db. You can use it as it has admin privileges.
+Or you can create a new one.
+
+### Log in with seeded user
+
+```bash
+curl -v -XPOST -H "Content-type: application/json" -d '{
+    "email": "steve.jobs@apple.com"
+}' 'http://localhost:3000/login'
+```
+
+The response will be as follows:
+
+```bash
+{
+    "emailToken": "my-email-token"
+}
+```
+
+Get the JWT
+
+```bash
+curl -v -XPOST -H "Content-type: application/json" -d '{
+    "email": "steve.jobs@apple.com",
+    "emailToken": "my-email-token"
+}' 'http://localhost:3000/authenticate'
+```
+
+The JWT should be in the <b>authorization</b> header of the response and looks like this:
+
+```bash
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbklkIjoyfQ.F46C7anVWf8RgAp6P1G1HuzNiFLolTebFzW6nPI0S4I
+```
+
+Congratulations, you now have admin powers!
+
+Get all users:
+
+```bash
+curl -v -XGET -H 'Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbklkIjoyfQ.F46C7anVWf8RgAp6P1G1HuzNiFLolTebFzW6nPI0S4I' -H "Content-type: application/json" 'http://localhost:3000/users'
+```
+
+Have fun exploring the other endpoints.
+
+## Things needed to improve the API
+
+- Version the API
+- Sanitize all the payloads/inputs
+- Better error messages from the API
+- Add more test coverage
+- Dockerize the full application(not just Postgres)
+- Refine the permissions system(for admin user and basic user)
+- Create real passwordless login workflow(needs investigation)
+- Add github action to deploy the application on Heroku(or Google Cloud/AWS/Azure)
+
+Among other things...
+
 ## Deployment
 
 TBD
 
+## CI/CD
+
+We are building the application and running the tests as part of the PR process.
+
 ## Credits
 
 Made with Love and :coffee:
-
-Yann
