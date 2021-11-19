@@ -54,7 +54,7 @@
     "@hapi/hapi": "20.1.5",
     "joi": "17.4.2",
     "@sendgrid/mail": "7.4.6",
-    "date-fns": "2.23.0",
+    "date-fns": "2.26.0",
     "hapi-auth-jwt2": "10.2.0",
     "hapi-pino": "8.3.0",
     "jsonwebtoken": "8.5.1",
