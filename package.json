@@ -45,7 +45,7 @@
     "ts-jest": "^27.0.5",
     "ts-node": "^10.2.1",
     "typescript": "^4.4.3",
-    "@types/hapi-pino": "8.0.2",
+    "@types/hapi-pino": "9.1.3",
     "@types/hapi__hapi": "20.0.9",
     "@types/jsonwebtoken": "8.5.5"
   },
